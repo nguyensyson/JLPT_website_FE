@@ -560,6 +560,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  useEffect(() => {
+    localStorage.setItem("language", language)
+  }, [language])
+
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang)
     localStorage.setItem("language", lang)
