@@ -97,6 +97,14 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     }))
   }
 
+  // Thêm useEffect để reset giá trị currentAnswer khi chuyển câu hỏi
+  useEffect(() => {
+    // Reset currentAnswer when changing questions
+    const currentQ = examData.questions[currentQuestion]
+    const answer = answers[currentQ.id]
+    // No need to do anything, just let the component re-render with the correct answer
+  }, [currentQuestion, answers])
+
   const handleSubmit = () => {
     setIsSubmitting(true)
     // Simulate submission

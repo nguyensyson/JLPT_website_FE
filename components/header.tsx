@@ -1,18 +1,43 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Menu, X, User, BookOpen } from "lucide-react"
+import { Menu, X, User, BookOpen, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useLanguage } from "@/contexts/language-context"
 import { LanguageSwitcher } from "@/components/language-switcher"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [username, setUsername] = useState("")
+  const [userRole, setUserRole] = useState("")
   const pathname = usePathname()
+  const router = useRouter()
   const { t } = useLanguage()
+
+  useEffect(() => {
+    // Check login status from localStorage
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true"
+    const storedUsername = localStorage.getItem("username") || ""
+    const storedRole = localStorage.getItem("userRole") || ""
+
+    setIsLoggedIn(loggedIn)
+    setUsername(storedUsername)
+    setUserRole(storedRole)
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn")
+    localStorage.removeItem("username")
+    localStorage.removeItem("userRole")
+    setIsLoggedIn(false)
+    setUsername("")
+    setUserRole("")
+    router.push("/")
+  }
 
   const navigation = [
     { name: t("nav.home"), href: "/" },
@@ -56,16 +81,36 @@ export function Header() {
               {item.name}
             </Link>
           ))}
+          {userRole === "admin" && (
+            <Link
+              href="/admin"
+              className={cn(
+                "text-sm font-semibold leading-6 px-4 py-2 rounded-lg transition-all duration-200",
+                pathname.startsWith("/admin") ? "text-white bg-jlpt-red shadow-lg" : "text-gray-900 hover:bg-gray-100",
+              )}
+            >
+              Quản trị
+            </Link>
+          )}
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:space-x-4">
           {/* Language Switcher */}
           <LanguageSwitcher />
 
-          <Button className="bg-jlpt-red hover:bg-red-800 text-white rounded-xl">
-            <User className="h-4 w-4 mr-2" />
-            {t("nav.login")}
-          </Button>
+          {isLoggedIn ? (
+            <Button variant="outline" className="rounded-xl" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Đăng xuất {username && `(${username})`}
+            </Button>
+          ) : (
+            <Button className="bg-jlpt-red hover:bg-red-800 text-white rounded-xl" asChild>
+              <Link href="/login">
+                <User className="h-4 w-4 mr-2" />
+                {t("nav.login")}
+              </Link>
+            </Button>
+          )}
         </div>
       </nav>
 
@@ -105,6 +150,18 @@ export function Header() {
                       {item.name}
                     </Link>
                   ))}
+                  {userRole === "admin" && (
+                    <Link
+                      href="/admin"
+                      className={cn(
+                        "block rounded-lg px-3 py-2 text-base font-semibold leading-7",
+                        pathname.startsWith("/admin") ? "text-white bg-jlpt-red" : "text-gray-900 hover:bg-gray-50",
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Quản trị
+                    </Link>
+                  )}
                 </div>
                 <div className="py-6 space-y-4">
                   {/* Mobile Language Switcher */}
@@ -112,10 +169,19 @@ export function Header() {
                     <LanguageSwitcher />
                   </div>
 
-                  <Button className="w-full bg-jlpt-red hover:bg-red-800 text-white rounded-xl">
-                    <User className="h-4 w-4 mr-2" />
-                    {t("nav.login")}
-                  </Button>
+                  {isLoggedIn ? (
+                    <Button className="w-full" variant="outline" onClick={handleLogout}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Đăng xuất {username && `(${username})`}
+                    </Button>
+                  ) : (
+                    <Button className="w-full bg-jlpt-red hover:bg-red-800 text-white rounded-xl" asChild>
+                      <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                        <User className="h-4 w-4 mr-2" />
+                        {t("nav.login")}
+                      </Link>
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

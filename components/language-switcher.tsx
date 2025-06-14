@@ -7,9 +7,9 @@ import { useLanguage } from "@/contexts/language-context"
 import { cn } from "@/lib/utils"
 
 const languages = [
-  { code: "vi", name: "Tiếng Việt", flag: "🇻🇳", shortFlag: "🇻🇳" },
-  { code: "en", name: "English", flag: "🇺🇸", shortFlag: "🇺🇸" },
-  { code: "ja", name: "日本語", flag: "🇯🇵", shortFlag: "🇯🇵" },
+  { code: "vi", name: "Tiếng Việt", flag: "🇻🇳", shortFlag: "VN" },
+  { code: "en", name: "English", flag: "🇺🇸", shortFlag: "US" },
+  { code: "ja", name: "日本語", flag: "🇯🇵", shortFlag: "JP" },
 ]
 
 export function LanguageSwitcher() {
@@ -30,8 +30,8 @@ export function LanguageSwitcher() {
         onClick={() => setIsOpen(!isOpen)}
         className="h-10 px-3 py-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
       >
-        <div className="flex items-center space-x-2">
-          <span className="text-lg">{currentLanguage.shortFlag}</span>
+        <div className="flex items-center">
+          <span className="text-base font-medium mr-1">{currentLanguage.shortFlag}</span>
           <ChevronDown className={cn("h-4 w-4 text-gray-500 transition-transform", isOpen && "rotate-180")} />
         </div>
       </Button>
@@ -52,8 +52,8 @@ export function LanguageSwitcher() {
                   language === lang.code && "bg-jlpt-red/5 text-jlpt-red",
                 )}
               >
-                <span className="text-lg">{lang.flag}</span>
-                <span className="text-sm font-medium whitespace-nowrap">{lang.name}</span>
+                <span className="text-base font-medium">{lang.shortFlag}</span>
+                <span className="text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis">{lang.name}</span>
                 {language === lang.code && <div className="ml-auto w-2 h-2 bg-jlpt-red rounded-full" />}
               </button>
             ))}
